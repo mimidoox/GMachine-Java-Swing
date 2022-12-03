@@ -87,6 +87,11 @@ public class Main extends javax.swing.JFrame {
 
         copyMenuItem.setMnemonic('y');
         copyMenuItem.setText("Entre 2 dates");
+        copyMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                copyMenuItemActionPerformed(evt);
+            }
+        });
         editMenu.add(copyMenuItem);
 
         pasteMenuItem.setMnemonic('p');
@@ -146,6 +151,12 @@ public class Main extends javax.swing.JFrame {
         desktopPane.add(mf);
         mf.setVisible(true);
     }//GEN-LAST:event_saveMenuItemActionPerformed
+
+    private void copyMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copyMenuItemActionPerformed
+        entredeuxdates edd = new entredeuxdates();
+        desktopPane.add(edd);
+        edd.setVisible(true);
+    }//GEN-LAST:event_copyMenuItemActionPerformed
 
     /**
      * @param args the command line arguments

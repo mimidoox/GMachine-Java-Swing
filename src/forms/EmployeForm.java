@@ -270,7 +270,7 @@ public class EmployeForm extends javax.swing.JInternalFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         if(id != 0){
-            int reponse = JOptionPane.showConfirmDialog(this, "Voulez vous vraiment supprimer cette salle ? ");
+            int reponse = JOptionPane.showConfirmDialog(this, "Voulez vous vraiment supprimer cet employé ? ");
             if(reponse == 0){
                 es.delete(es.findById(id));
                 load();

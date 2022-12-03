@@ -81,7 +81,18 @@ public class MachineService implements IDao<Machine> {
 
 	@Override
 	public Machine findById(int id) {
-		
+		try {
+            String sql = "select * from machine where id = ?";
+            PreparedStatement ps = Connexion.getConnection().prepareStatement(sql);
+            ps.setInt(1,id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new Machine(rs.getInt("id"), rs.getString("reference"), rs.getString("marque"),
+						rs.getDouble("prix"), rs.getDate("dateAchat"), ss.findById(rs.getInt("salle")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 		return null;
 	}
 

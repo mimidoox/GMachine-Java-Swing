@@ -36,12 +36,17 @@ public class MachineForm extends javax.swing.JInternalFrame {
      */
     public MachineForm() {
         initComponents();
-        date1();
         ss = new SalleService();
         mf = new MachineService();
         model = (DefaultTableModel) listMachine.getModel();
         load();
+        loadSalle();
     
+    }
+    public void loadSalle(){
+        for(Salle s :ss.findAll()){
+            comboSalle.addItem(s);
+        }
     }
      public void load (){
         model.setRowCount(0);
@@ -52,15 +57,12 @@ public class MachineForm extends javax.swing.JInternalFrame {
                 m.getMarque(),
                 m.getPrix(),
                 m.getDateAchat(),
-                m.getSalle().getId()
+                m.getSalle()
                 
             });
         }
     }
-    public void date1(){
-    String txtDate = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH).format(new Date());
-    textDate.setText(txtDate);
-    }
+  
     
 
     /**
@@ -72,6 +74,7 @@ public class MachineForm extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        utilDateModel1 = new org.jdatepicker.impl.UtilDateModel();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -81,11 +84,11 @@ public class MachineForm extends javax.swing.JInternalFrame {
         textRef = new javax.swing.JTextField();
         textMarque = new javax.swing.JTextField();
         textPrix = new javax.swing.JTextField();
-        comboSalle = new javax.swing.JComboBox();
+        comboSalle = new javax.swing.JComboBox<Salle>();
         btnadd = new javax.swing.JButton();
         btnupdate = new javax.swing.JButton();
         btndelete = new javax.swing.JButton();
-        textDate = new javax.swing.JTextField();
+        dateachat = new com.toedter.calendar.JDateChooser();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         listMachine = new javax.swing.JTable();
@@ -108,7 +111,7 @@ public class MachineForm extends javax.swing.JInternalFrame {
 
         jLabel5.setText("Salle");
 
-        comboSalle.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        comboSalle.setEditable(true);
 
         btnadd.setText("Ajouter");
         btnadd.addActionListener(new java.awt.event.ActionListener() {
@@ -118,8 +121,18 @@ public class MachineForm extends javax.swing.JInternalFrame {
         });
 
         btnupdate.setText("Modifier");
+        btnupdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnupdateActionPerformed(evt);
+            }
+        });
 
         btndelete.setText("Supprimer");
+        btndelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btndeleteActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -139,7 +152,7 @@ public class MachineForm extends javax.swing.JInternalFrame {
                     .addComponent(textMarque)
                     .addComponent(textPrix)
                     .addComponent(comboSalle, 0, 137, Short.MAX_VALUE)
-                    .addComponent(textDate))
+                    .addComponent(dateachat, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -162,13 +175,13 @@ public class MachineForm extends javax.swing.JInternalFrame {
                     .addComponent(jLabel2)
                     .addComponent(textMarque, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(textPrix, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(textPrix, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4)
-                    .addComponent(textDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(dateachat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
@@ -191,6 +204,11 @@ public class MachineForm extends javax.swing.JInternalFrame {
                 "ID", "REFERENCE", "MARQUE", "PRIX", "DATE ACHAT", "SALLE"
             }
         ));
+        listMachine.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                listMachineMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(listMachine);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -237,26 +255,63 @@ public class MachineForm extends javax.swing.JInternalFrame {
        String ref= textRef.getText();
        String marque = textMarque.getText();
        double prix = Double.parseDouble(textPrix.getText());
-        SimpleDateFormat sdf = new SimpleDateFormat();
-        try {
-            Date dateachat =sdf.parse(textDate.getText());
-        } catch (ParseException ex) {
-            Logger.getLogger(MachineForm.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        int idsalle =Integer.parseInt(comboSalle.getSelectedItem().toString());
-        Salle salle = ss.findById(idsalle);
-      /*  if(mf.create(new Machine(ref, marque,prix,dateachat,idsalle))){
-            JOptionPane.showMessageDialog(this, "Bien ajouté");
+       Date dateach = dateachat.getDate();
+        Salle salle = (Salle) comboSalle.getSelectedItem();
+        if(mf.create(new Machine(ref, marque,prix,dateach,salle))){
+            JOptionPane.showMessageDialog(this, "Machine bien ajoutée");
             load();
-        }*/
+        }
     }//GEN-LAST:event_btnaddActionPerformed
+
+    private void btnupdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnupdateActionPerformed
+       String ref= textRef.getText();
+       String marque = textMarque.getText();
+       double prix = Double.parseDouble(textPrix.getText());
+       Date dateach = dateachat.getDate();
+       Salle salle = (Salle) comboSalle.getSelectedItem();
+             if(mf.update(new Machine(id,ref, marque,prix,dateach,salle))){
+            JOptionPane.showMessageDialog(this, "Machine a été bien modifié");
+                textRef.setText("");
+                textMarque.setText("");
+                dateachat.getLocale();
+                comboSalle.getItemAt(0);
+            load();
+             }
+    }//GEN-LAST:event_btnupdateActionPerformed
+
+    private void btndeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btndeleteActionPerformed
+        if(id != 0){
+            int reponse = JOptionPane.showConfirmDialog(this, "Voulez vous vraiment supprimer cette machine ? ");
+            if(reponse == 0){
+                mf.delete(mf.findById(id));
+                load();
+                JOptionPane.showMessageDialog(this, "Machine a été supprimé avec succès !");
+                textRef.setText("");
+                textMarque.setText("");
+                dateachat.getLocale();
+                comboSalle.getItemAt(0);
+                
+            }
+        }
+    }//GEN-LAST:event_btndeleteActionPerformed
+
+    private void listMachineMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listMachineMouseClicked
+       id = Integer.parseInt(model.getValueAt(listMachine.getSelectedRow(), 0).toString());
+      
+        textRef.setText(model.getValueAt(listMachine.getSelectedRow(), 1).toString());
+        textMarque.setText(model.getValueAt(listMachine.getSelectedRow(), 2).toString());
+        textPrix.setText(model.getValueAt(listMachine.getSelectedRow(), 3).toString());
+        dateachat.setDate((Date) model.getValueAt(listMachine.getSelectedRow(), 4));
+        comboSalle.setSelectedItem(model.getValueAt(listMachine.getSelectedRow(), 5));
+    }//GEN-LAST:event_listMachineMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnadd;
     private javax.swing.JButton btndelete;
     private javax.swing.JButton btnupdate;
-    private javax.swing.JComboBox comboSalle;
+    private javax.swing.JComboBox<Salle> comboSalle;
+    private com.toedter.calendar.JDateChooser dateachat;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -266,10 +321,10 @@ public class MachineForm extends javax.swing.JInternalFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable listMachine;
-    private javax.swing.JTextField textDate;
     private javax.swing.JTextField textMarque;
     private javax.swing.JTextField textPrix;
     private javax.swing.JTextField textRef;
+    private org.jdatepicker.impl.UtilDateModel utilDateModel1;
     // End of variables declaration//GEN-END:variables
 
 }
