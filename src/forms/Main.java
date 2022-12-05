@@ -5,6 +5,18 @@
  */
 package forms;
 
+import connexion.Connexion;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartFrame;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.data.jdbc.JDBCCategoryDataset;
+
 /**
  *
  * @author Lachgar
@@ -38,11 +50,10 @@ public class Main extends javax.swing.JFrame {
         editMenu = new javax.swing.JMenu();
         cutMenuItem = new javax.swing.JMenuItem();
         copyMenuItem = new javax.swing.JMenuItem();
-        pasteMenuItem = new javax.swing.JMenuItem();
-        deleteMenuItem = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         contentMenuItem = new javax.swing.JMenuItem();
         aboutMenuItem = new javax.swing.JMenuItem();
+        jMenuItem1 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -83,6 +94,11 @@ public class Main extends javax.swing.JFrame {
 
         cutMenuItem.setMnemonic('t');
         cutMenuItem.setText("Par Salle");
+        cutMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cutMenuItemActionPerformed(evt);
+            }
+        });
         editMenu.add(cutMenuItem);
 
         copyMenuItem.setMnemonic('y');
@@ -94,26 +110,36 @@ public class Main extends javax.swing.JFrame {
         });
         editMenu.add(copyMenuItem);
 
-        pasteMenuItem.setMnemonic('p');
-        pasteMenuItem.setText("Paste");
-        editMenu.add(pasteMenuItem);
-
-        deleteMenuItem.setMnemonic('d');
-        deleteMenuItem.setText("Delete");
-        editMenu.add(deleteMenuItem);
-
         menuBar.add(editMenu);
 
         helpMenu.setMnemonic('h');
-        helpMenu.setText("Help");
+        helpMenu.setText("Graphes");
 
         contentMenuItem.setMnemonic('c');
-        contentMenuItem.setText("Contents");
+        contentMenuItem.setText("Nombre de Machines par Salle");
+        contentMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                contentMenuItemActionPerformed(evt);
+            }
+        });
         helpMenu.add(contentMenuItem);
 
         aboutMenuItem.setMnemonic('a');
-        aboutMenuItem.setText("About");
+        aboutMenuItem.setText("Noms de Machines par Date");
+        aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                aboutMenuItemActionPerformed(evt);
+            }
+        });
         helpMenu.add(aboutMenuItem);
+
+        jMenuItem1.setText("Prix de Machines par Salle");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        helpMenu.add(jMenuItem1);
 
         menuBar.add(helpMenu);
 
@@ -152,11 +178,72 @@ public class Main extends javax.swing.JFrame {
         mf.setVisible(true);
     }//GEN-LAST:event_saveMenuItemActionPerformed
 
+    private void contentMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_contentMenuItemActionPerformed
+        String query="select s.code,count(m.id) as 'nbr' from machine m right join salle s on s.id=m.salle group by s.code order by 'nbr' desc";
+        JDBCCategoryDataset dataset;
+        try {
+            dataset = new JDBCCategoryDataset(Connexion.getConnection(),query);
+            JFreeChart chart;
+            chart = ChartFactory.createLineChart("Nombre de Machines par Salle","Salle","Nombre de Machines",dataset,PlotOrientation.VERTICAL,false,true,true);
+            BarRenderer renderer =null;
+            CategoryPlot plot =null;
+            renderer = new BarRenderer();
+            ChartFrame frame = new ChartFrame("Machines par Salle",chart);
+            frame.setVisible(true);
+            frame.setSize(600, 450);
+            } catch (SQLException ex) {
+                Logger.getLogger(MachineForm.class.getName()).log(Level.SEVERE, null, ex);
+            }
+    }//GEN-LAST:event_contentMenuItemActionPerformed
+
+    private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
+                String query="select dateAchat,count(id) from machine GROUP by dateAchat";
+        JDBCCategoryDataset dataset;
+        try {
+            dataset = new JDBCCategoryDataset(Connexion.getConnection(),query);
+            JFreeChart chart;
+            chart = ChartFactory.createLineChart("Nombre de Machines par Date","Date d'Achat","Nombre de Machines",dataset,PlotOrientation.VERTICAL,false,true,true);
+            BarRenderer renderer =null;
+            CategoryPlot plot =null;
+            renderer = new BarRenderer();
+            ChartFrame frame = new ChartFrame("Machines par Date",chart);
+            frame.setVisible(true);
+            frame.setSize(600, 450);
+            } catch (SQLException ex) {
+                Logger.getLogger(MachineForm.class.getName()).log(Level.SEVERE, null, ex);
+            }
+    }//GEN-LAST:event_aboutMenuItemActionPerformed
+
     private void copyMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copyMenuItemActionPerformed
         entredeuxdates edd = new entredeuxdates();
         desktopPane.add(edd);
         edd.setVisible(true);
     }//GEN-LAST:event_copyMenuItemActionPerformed
+
+    private void cutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cutMenuItemActionPerformed
+        SalleMachine sm = new SalleMachine();
+        desktopPane.add(sm);
+        sm.setVisible(true);
+    }//GEN-LAST:event_cutMenuItemActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        String query;
+        query = "select s.code,sum(m.prix) from machine m inner join salle s on s.id=m.salle group by s.code ";
+        JDBCCategoryDataset dataset;
+        try {
+            dataset = new JDBCCategoryDataset(Connexion.getConnection(),query);
+            JFreeChart chart;
+            chart = ChartFactory.createLineChart("Prix de Machines par Salle","Salle","Prix",dataset,PlotOrientation.VERTICAL,false,true,true);
+            BarRenderer renderer =null;
+            CategoryPlot plot =null;
+            renderer = new BarRenderer();
+            ChartFrame frame = new ChartFrame("Prix Machines par Salle",chart);
+            frame.setVisible(true);
+            frame.setSize(600, 450);
+            } catch (SQLException ex) {
+                Logger.getLogger(MachineForm.class.getName()).log(Level.SEVERE, null, ex);
+            }
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -198,14 +285,13 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JMenuItem contentMenuItem;
     private javax.swing.JMenuItem copyMenuItem;
     private javax.swing.JMenuItem cutMenuItem;
-    private javax.swing.JMenuItem deleteMenuItem;
     private javax.swing.JDesktopPane desktopPane;
     private javax.swing.JMenu editMenu;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuBar menuBar;
-    private javax.swing.JMenuItem pasteMenuItem;
     private javax.swing.JMenuItem salleMenuItem;
     private javax.swing.JMenuItem saveMenuItem;
     // End of variables declaration//GEN-END:variables

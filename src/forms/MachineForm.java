@@ -5,6 +5,7 @@
  */
 package forms;
 
+import connexion.Connexion;
 import entities.Salle;
 import java.awt.BorderLayout;
 import java.text.DateFormat;
@@ -17,10 +18,18 @@ import javax.swing.table.DefaultTableModel;
 import services.MachineService;
 import services.SalleService;
 import entities.Machine;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartFrame;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.data.jdbc.JDBCCategoryDataset;
 
 /**
  *
@@ -157,11 +166,11 @@ public class MachineForm extends javax.swing.JInternalFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnadd)
-                .addGap(18, 18, 18)
+                .addGap(41, 41, 41)
                 .addComponent(btnupdate)
-                .addGap(18, 18, 18)
+                .addGap(41, 41, 41)
                 .addComponent(btndelete)
-                .addGap(98, 98, 98))
+                .addGap(79, 79, 79))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -289,8 +298,7 @@ public class MachineForm extends javax.swing.JInternalFrame {
                 textRef.setText("");
                 textMarque.setText("");
                 dateachat.getLocale();
-                comboSalle.getItemAt(0);
-                
+                comboSalle.getItemAt(0);               
             }
         }
     }//GEN-LAST:event_btndeleteActionPerformed
