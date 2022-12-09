@@ -70,7 +70,6 @@ public class EmployeForm extends javax.swing.JInternalFrame {
         setClosable(true);
         setIconifiable(true);
         setMaximizable(true);
-        setResizable(true);
         setTitle("Gestion Des Employés");
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Informations"));

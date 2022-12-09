@@ -5,6 +5,7 @@
  */
 package forms;
 
+import com.formdev.flatlaf.FlatDarkLaf;
 import connexion.Connexion;
 import entities.Salle;
 import java.awt.BorderLayout;
@@ -23,6 +24,8 @@ import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartFrame;
 import org.jfree.chart.JFreeChart;
@@ -50,8 +53,10 @@ public class MachineForm extends javax.swing.JInternalFrame {
         model = (DefaultTableModel) listMachine.getModel();
         load();
         loadSalle();
+        
     
     }
+ 
     public void loadSalle(){
         for(Salle s :ss.findAll()){
             comboSalle.addItem(s);
@@ -105,7 +110,6 @@ public class MachineForm extends javax.swing.JInternalFrame {
         setClosable(true);
         setIconifiable(true);
         setMaximizable(true);
-        setResizable(true);
         setTitle("Gestion Des Machines");
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Informations"));

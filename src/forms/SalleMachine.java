@@ -80,8 +80,7 @@ public class SalleMachine extends javax.swing.JInternalFrame {
         setClosable(true);
         setIconifiable(true);
         setMaximizable(true);
-        setResizable(true);
-        setTitle("Machine By Salle");
+        setTitle("Machines par Salle");
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Informations"));
 

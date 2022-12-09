@@ -66,7 +66,7 @@ public class entredeuxdates extends javax.swing.JInternalFrame {
         setClosable(true);
         setIconifiable(true);
         setMaximizable(true);
-        setResizable(true);
+        setTitle("Machines entre deux dates");
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Informations"));
 
